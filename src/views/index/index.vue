@@ -63,7 +63,10 @@ import { onBeforeMount, reactive, ref } from "vue";
 import zhCN from "ant-design-vue/es/locale/zh_CN";
 import { DownloadOutlined, SelectOutlined } from "@ant-design/icons-vue";
 // @ts-ignore
+import { formatDate } from "~/utils/day.ts";
+// @ts-ignore
 import axios from "~/utils/axios";
+import { logLabeled } from "../../utils/logger";
 
 interface RecordItem {
   id: string;
@@ -260,8 +263,16 @@ const filterEnter = async () => {
 
 const exportallLoading = ref<boolean>(false);
 const exportLoading = ref<boolean>(false);
-const exportAllItem = () => {
-  exportallLoading.value = false;
+const exportAllItem = async () => {
+  exportallLoading.value = true;
+  try {
+    const res = await axios.post("api/backExport/export?docType=0");
+    console.log(res);
+  } catch (error) {
+    logLabeled(`export all error ${error}`, "error", "", "color: #66ccff");
+  } finally {
+    exportallLoading.value = false;
+  }
 };
 
 const visible = ref<boolean>(false);
@@ -269,9 +280,19 @@ const showModal = () => {
   visible.value = true;
 };
 const dateValue = ref<any[]>([]);
-const exportItem = () => {
-  console.log(dateValue.value);
-  // visible.value = false;
+const exportItem = async () => {
+  if (!dateValue.value[0]) {
+    return;
+  }
+  const fromDate = dateValue.value[0];
+  const toDate = dateValue.value[1];
+  const fd = formatDate(fromDate) + "," + formatDate(toDate);
+  try {
+    const res = await axios(`api/backExport/export?docType=0&dataRange=${fd}`);
+    console.log(res);
+  } catch (error) {
+    logLabeled(`export error ${error}`, "error", "", "color: #66ccff");
+  }
 };
 </script>
 
