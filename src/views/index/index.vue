@@ -14,6 +14,13 @@
           </template>
           导出指定内容
         </a-button>
+        <a-input-search
+          v-model:value="filterValue"
+          class="search-input"
+          placeholder="输入用户昵称"
+          :loading="filterLoading"
+          @search="filterEnter"
+        />
       </div>
 
       <a-modal
@@ -32,8 +39,8 @@
         :columns="columns"
         :data-source="tableData"
         :pagination="pageSetting"
-        :loading="loading"
         align="center"
+        :loading="loading"
         @change="handleTableChange"
         @expand="handleExpand"
       >
@@ -55,7 +62,6 @@
 import { onBeforeMount, reactive, ref } from "vue";
 import zhCN from "ant-design-vue/es/locale/zh_CN";
 import { DownloadOutlined, SelectOutlined } from "@ant-design/icons-vue";
-// import { Moment } from "moment";
 // @ts-ignore
 import axios from "~/utils/axios";
 
@@ -171,11 +177,15 @@ const pageSetting: PageSetting = reactive({
 
 const loading = ref<boolean>(false);
 
-const refreshTable = async () => {
+const refreshTable = async (filter?: string) => {
   loading.value = true;
   const { current, pageSize } = pageSetting;
   try {
-    const res = await axios.get(`/api/background/list?pageNo=${current}&pageSize=${pageSize}`);
+    let queryURL = `/api/background/list?pageNo=${current}&pageSize=${pageSize}`;
+    if (filter) {
+      queryURL += `&nickname=${filter}`;
+    }
+    const res = await axios.get(queryURL);
     const { data } = res;
     const arr: Array<DataItem> = [];
     data.records.forEach((record: RecordItem, index: number) => {
@@ -194,6 +204,7 @@ const refreshTable = async () => {
       });
     });
     tableData.value = arr;
+    pageSetting.total = res.data.total;
   } catch (error) {
     console.log("refreshTable error:", error);
   } finally {
@@ -239,6 +250,14 @@ onBeforeMount(async () => {
   }
 });
 
+const filterValue = ref<string>("");
+const filterLoading = ref<boolean>(false);
+const filterEnter = async () => {
+  filterLoading.value = true;
+  await refreshTable(filterValue.value);
+  filterLoading.value = false;
+};
+
 const exportallLoading = ref<boolean>(false);
 const exportLoading = ref<boolean>(false);
 const exportAllItem = () => {
@@ -267,6 +286,13 @@ const exportItem = () => {
     display: flex;
     padding-bottom: 12px;
     gap: 20px;
+    position: relative;
+
+    .search-input {
+      width: 300px;
+      position: absolute;
+      right: 0;
+    }
   }
 }
 
