@@ -11,7 +11,8 @@ export default defineConfig({
     https: false,
     proxy: {
       "/api": {
-        target: "https://springboot-cxiq-2052569-1312702110.ap-shanghai.run.tcloudbase.com",
+        target: "http://localhost:80",
+        // target: "https://springboot-cxiq-2052569-1312702110.ap-shanghai.run.tcloudbase.com",
         changeOrigin: true,
         // @ts-ignore
         pathRewrite: {

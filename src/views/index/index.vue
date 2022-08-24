@@ -61,11 +61,14 @@
 <script setup lang="ts">
 import { onBeforeMount, reactive, ref } from "vue";
 import zhCN from "ant-design-vue/es/locale/zh_CN";
+import { message } from "ant-design-vue";
 import { DownloadOutlined, SelectOutlined } from "@ant-design/icons-vue";
 // @ts-ignore
 import { formatDate } from "~/utils/day.ts";
 // @ts-ignore
 import axios from "~/utils/axios";
+// @ts-ignore
+import { downloadFile, df } from "~/utils/export.ts";
 import { logLabeled } from "../../utils/logger";
 
 interface RecordItem {
@@ -266,8 +269,11 @@ const exportLoading = ref<boolean>(false);
 const exportAllItem = async () => {
   exportallLoading.value = true;
   try {
-    const res = await axios.post("api/backExport/export?docType=0");
-    console.log(res);
+    const res = await axios.post("api/backExport/export?docType=0", { responseType: "blob" });
+    if (res) {
+      downloadFile(res, "全部信息.xls");
+      message.success("导出成功！");
+    }
   } catch (error) {
     logLabeled(`export all error ${error}`, "error", "", "color: #66ccff");
   } finally {
@@ -288,8 +294,14 @@ const exportItem = async () => {
   const toDate = dateValue.value[1];
   const fd = formatDate(fromDate) + "," + formatDate(toDate);
   try {
-    const res = await axios(`api/backExport/export?docType=0&dataRange=${fd}`);
-    console.log(res);
+    const res = await axios.post(`api/backExport/export?docType=0&dataRange=${fd}`, {
+      responseType: "blob",
+    });
+    if (res) {
+      downloadFile(res, `${formatDate(fromDate)}至${formatDate(toDate)}`);
+      message.success("导出成功！");
+      visible.value = false;
+    }
   } catch (error) {
     logLabeled(`export error ${error}`, "error", "", "color: #66ccff");
   }
