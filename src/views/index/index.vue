@@ -1,13 +1,39 @@
 <template>
   <div class="content">
     <a-config-provider :locale="zhCN">
+      <div class="export-button">
+        <a-button type="primary" :loading="exportallLoading" @click="exportAllItem">
+          <template #icon>
+            <DownloadOutlined />
+          </template>
+          导出全部
+        </a-button>
+        <a-button :loading="exportLoading" @click="showModal">
+          <template #icon>
+            <SelectOutlined />
+          </template>
+          导出指定内容
+        </a-button>
+      </div>
+
+      <a-modal
+        v-model:visible="visible"
+        title="日期范围"
+        ok-text="导出"
+        cancel-text="取消"
+        @ok="exportItem"
+      >
+        <div class="date-modal">
+          <a-range-picker v-model:value="dateValue" show-time> </a-range-picker>
+        </div>
+      </a-modal>
+
       <a-table
         :columns="columns"
         :data-source="tableData"
         :pagination="pageSetting"
         :loading="loading"
         align="center"
-        :row-selection="rowSelection"
         @change="handleTableChange"
         @expand="handleExpand"
       >
@@ -28,18 +54,10 @@
 <script setup lang="ts">
 import { onBeforeMount, reactive, ref } from "vue";
 import zhCN from "ant-design-vue/es/locale/zh_CN";
-// @ts-ignore
-import { ColumnProps } from "ant-design-vue/es/table/interface";
+import { DownloadOutlined, SelectOutlined } from "@ant-design/icons-vue";
+// import { Moment } from "moment";
 // @ts-ignore
 import axios from "~/utils/axios";
-
-type Key = ColumnProps["key"];
-
-const rowSelection = {
-  onChange: (selectedRowKeys: Key[], selectedRows: DataItem[]) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, "selectedRows: ", selectedRows);
-  },
-};
 
 interface RecordItem {
   id: string;
@@ -220,13 +238,42 @@ onBeforeMount(async () => {
     loading.value = false;
   }
 });
+
+const exportallLoading = ref<boolean>(false);
+const exportLoading = ref<boolean>(false);
+const exportAllItem = () => {
+  exportallLoading.value = false;
+};
+
+const visible = ref<boolean>(false);
+const showModal = () => {
+  visible.value = true;
+};
+const dateValue = ref<any[]>([]);
+const exportItem = () => {
+  console.log(dateValue.value);
+  // visible.value = false;
+};
 </script>
 
 <style lang="less" scoped>
 .content {
   background-color: #fff;
-  padding: 24px;
+  padding: 12px 24px 24px 24px;
   min-height: 74vh;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+
+  .export-button {
+    display: flex;
+    padding-bottom: 12px;
+    gap: 20px;
+  }
+}
+
+.date-modal {
+  margin: 0 auto;
+  :deep(.ant-picker-input) {
+    width: 200px;
+  }
 }
 </style>
