@@ -9,6 +9,12 @@
 import { logLabeled } from "./utils/logger";
 
 logLabeled("I'm ready!  ⸜(๑'ᵕ'๑)⸝⋆*", "log", "", "color: #66ccff");
+logLabeled(
+  `Your running on ${import.meta.env.VITE_APP_URL}!  ⸜(๑'ᵕ'๑)⸝⋆*`,
+  "log",
+  "",
+  "color: #66ccff"
+);
 </script>
 
 <style lang="less" scoped>

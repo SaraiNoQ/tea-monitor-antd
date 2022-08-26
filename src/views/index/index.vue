@@ -28,6 +28,7 @@
         title="日期范围"
         ok-text="导出"
         cancel-text="取消"
+        :confirm-loading="confirmLoading"
         @ok="exportItem"
       >
         <div class="date-modal">
@@ -269,7 +270,12 @@ const exportLoading = ref<boolean>(false);
 const exportAllItem = async () => {
   exportallLoading.value = true;
   try {
-    const res = await axios.post("api/backExport/export?docType=0", { responseType: "blob" });
+    // const res = await axios.post("api/backExport/export?docType=0", { responseType: "blob" });
+    const res = await axios({
+      method: "post",
+      url: "api/backExport/export?docType=0",
+      responseType: "blob",
+    });
     if (res) {
       downloadFile(res, "全部信息.xls");
       message.success("导出成功！");
@@ -286,15 +292,19 @@ const showModal = () => {
   visible.value = true;
 };
 const dateValue = ref<any[]>([]);
+const confirmLoading = ref<boolean>(false);
 const exportItem = async () => {
   if (!dateValue.value[0]) {
     return;
   }
+  confirmLoading.value = true;
   const fromDate = dateValue.value[0];
   const toDate = dateValue.value[1];
   const fd = formatDate(fromDate) + "," + formatDate(toDate);
   try {
-    const res = await axios.post(`api/backExport/export?docType=0&dataRange=${fd}`, {
+    const res = await axios({
+      method: "post",
+      url: `api/backExport/export?docType=0&dataRange=${fd}`,
       responseType: "blob",
     });
     if (res) {
@@ -304,6 +314,8 @@ const exportItem = async () => {
     }
   } catch (error) {
     logLabeled(`export error ${error}`, "error", "", "color: #66ccff");
+  } finally {
+    confirmLoading.value = false;
   }
 };
 </script>
