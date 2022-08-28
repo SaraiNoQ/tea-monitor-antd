@@ -20,5 +20,7 @@ logLabeled(
 <style lang="less" scoped>
 #app {
   width: 100vw;
+  min-width: 940px;
+  min-height: 100vh;
 }
 </style>
