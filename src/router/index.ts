@@ -13,12 +13,12 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: "/home",
-    name: "Home",
+    name: "首页",
     component: () => import("~/views/home/index.vue"),
     children: [
       {
         path: "/home/index",
-        name: "首页",
+        name: "数据列表",
         component: () => import("~/views/index/index.vue"),
         meta: {
           keepAlive: true,
@@ -31,6 +31,11 @@ const routes: RouteRecordRaw[] = [
         meta: {
           keepAlive: true,
         },
+      },
+      {
+        path: "/home/index/detail",
+        name: "详情",
+        component: () => import("~/views/detail/index.vue"),
       },
     ],
   },
