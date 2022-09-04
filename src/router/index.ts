@@ -23,6 +23,13 @@ const routes: RouteRecordRaw[] = [
         meta: {
           keepAlive: true,
         },
+        children: [
+          {
+            path: "/home/index/details",
+            name: "用户详情",
+            component: () => import("~/views/index/components/detail.vue"),
+          },
+        ],
       },
       {
         path: "/home/log",
@@ -38,6 +45,10 @@ const routes: RouteRecordRaw[] = [
         component: () => import("~/views/detail/index.vue"),
       },
     ],
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    redirect: "/404",
   },
 ];
 
