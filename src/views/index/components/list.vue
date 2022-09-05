@@ -231,7 +231,7 @@ const refreshTable = async (filter?: string) => {
 const handleTableChange = (pagination: PageSetting) => {
   pageSetting.current = pagination.current;
   pageSetting.pageSize = pagination.pageSize;
-  refreshTable();
+  refreshTable(filterValue.value);
 };
 
 onBeforeMount(async () => {
