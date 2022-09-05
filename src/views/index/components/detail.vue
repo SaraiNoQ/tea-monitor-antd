@@ -26,7 +26,8 @@
 
 <script setup lang="ts">
 import { onBeforeMount, ref } from "vue";
-import axios from "axios";
+// @ts-ignore
+import axios from "~/utils/axios";
 
 interface DataItem {
   // nickname: string | undefined;
@@ -69,9 +70,7 @@ const getQueryString = (name: string) => {
 onBeforeMount(async () => {
   loading.value = true;
   try {
-    const res = await axios.post(`/api/history/detail`, {
-      id: getQueryString("id"),
-    });
+    const res = await axios.post(`/api/history/detail?id=${getQueryString("id")}`);
     if (res.status === 200) {
       const resData: DataInfo = res.data.info;
       const resArr: ArrItem[] = res.data.problem;
