@@ -69,7 +69,9 @@ const getQueryString = (name: string) => {
 onBeforeMount(async () => {
   loading.value = true;
   try {
-    const res = await axios.post(`/api/history/detail?id=${getQueryString("id")}`);
+    const res = await axios.post(`/api/history/detail`, {
+      id: getQueryString("id"),
+    });
     if (res.status === 200) {
       const resData: DataInfo = res.data.info;
       const resArr: ArrItem[] = res.data.problem;
