@@ -69,7 +69,7 @@ import { logLabeled } from "~/utils/logger";
 
 const route = useRouter();
 const toDetail = (param: DataItem) => {
-  const id = param.records[param.key - 1].recordId;
+  const id = param.records[0].recordId;
   if (id) {
     route.push({
       path: `/home/index/details`,
